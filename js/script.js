@@ -2,13 +2,13 @@
 $(function(){
     var canvas = $("#canvas")[0];
     var ctx = canvas.getContext('2d');
-    ctx.fillRect(20,20,20,20);
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     var socket = io();
-    socket.on('welcome', function(data) {
+    socket.on('position', function(data) {
         console.log(data);
-
-        // Respond with a message including this clients' id sent from the server
-        // socket.emit('i am client', {data: 'foo!', id: data.id});
+        ctx.fillRect(data.x,data.y,20,20);
     });
 });
