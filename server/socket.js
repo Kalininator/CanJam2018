@@ -17,9 +17,11 @@ module.exports = function listen(server){
             delete players[socket.id];
             sendPlayerList();
         });
-        socket.on('moved',function(data){
-           players[socket.id].position = data;
-           playerPositionUpdate(socket.id);
+        socket.on('changemousedown',function(data){
+            players[socket.id].mousedown = data;
+        });
+        socket.on('changemoveto',function(data){
+            players[socket.id].moveto = data;
         });
 
 

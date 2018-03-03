@@ -27,7 +27,6 @@ $(function(){
     socket.on('players',function(data){
         players = data;
         drawPlayers();
-        drawPlayer(players[id],'red');
     });
     socket.on('playermoved',function(data){
         players[data.id].position = data.position;
@@ -36,12 +35,15 @@ $(function(){
 
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
+        socket.emit('changemousedown',true);
     });
     $(canvas).on('mouseup touchend',function(){
         mousedown = false;
+        socket.emit('changemousedown',false);
     });
     $(canvas).on("mousemove touchmove", function(evt){
         moveto = getTouchPos(evt);
+        socket.emit('changemoveto',moveto);
     });
 });
 
@@ -58,8 +60,6 @@ function Move(vec){
     players[id].position.x += norm.x;
     players[id].position.y += norm.y;
     drawPlayers();
-    //tell server ya moved
-    socket.emit('moved',players[id].position);
 }
 
 function drawPlayers(){

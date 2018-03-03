@@ -5,8 +5,8 @@ module.exports = function(position){
     this.moveto = null;
     this.update = function(){
         //movement
-        if (moveto != null && mousedown){
-            norm = normaliseVec(this.moveto,5);
+        if (this.moveto != null && this.mousedown){
+            norm = utils.normaliseVec(this.moveto,5);
             this.position.x += norm.x;
             this.position.y += norm.y;
         }
