@@ -90,11 +90,22 @@ function drawPlayer(player,color){
         ctx.fill();
     }else{
         //player outside, draw dot on border
-        drawOffscreenIndicator(pos, 5, 'green');
+        // drawOffscreenIndicator(pos, 5, 'green');
+        offscreen = getOffscreenPosition(pos);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(offscreen.x,offscreen.y,10,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+        ctx.font = '15pt Calibri';
+        ctx.textAlign = offscreen.textAlign;
+        ctx.textBaseline = offscreen.textBaseline;
+        ctx.fillText(offscreen.distance + "m",offscreen.text_x,offscreen.text_y);
     }
 }
 
-function drawOffscreenIndicator(pos, radius, color){
+function getOffscreenPosition(pos){
+    var out = {};
     var dx = pos.x - WIDTH/2;
     var dy = pos.y - HEIGHT/2;
     // var dx = WIDTH/2 - pos.x;
@@ -151,24 +162,16 @@ function drawOffscreenIndicator(pos, radius, color){
         }
     }
 
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x,y,radius,0,2*Math.PI);
-    ctx.closePath();
-    ctx.fill();
 
-
-    ctx.font = '15pt Calibri';
-    ctx.textBaseline = 'middle';
     var tx;
     if(x == WIDTH){
-        ctx.textAlign='right';
+        out.textAlign='right';
         tx = WIDTH - 10;
     }else if(x == 0){
-        ctx.textAlign='left';
+        out.textAlign='left';
         tx = 10;
     }else{
-        ctx.textAlign = 'center';
+        out.textAlign = 'center';
         tx = x;
     }
     var ty;
@@ -179,9 +182,14 @@ function drawOffscreenIndicator(pos, radius, color){
     }else{
         ty = y;
     }
-    var distance = Math.abs(dx) + Math.abs(dy);
-    ctx.fillText(Math.round(distance/10) + "m",tx,ty);
 
+    out.distance = Math.round((Math.abs(dx) + Math.abs(dy))/10);
+    out.x = x;
+    out.y = y;
+    out.text_x = tx;
+    out.text_y = ty;
+    out.textBaseline = 'middle';
+    return out;
 }
 
 function drawPosition(position){
