@@ -28,6 +28,12 @@ $(function(){
         players = data;
         drawPlayers();
     });
+    socket.on('playerUpdates',function(data){
+        for (var id in data){
+            players[id].position = data[id].position;
+        }
+        drawPlayers();
+    });
     socket.on('playermoved',function(data){
         players[data.id].position = data.position;
         drawPlayers();

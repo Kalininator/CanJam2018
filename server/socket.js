@@ -34,14 +34,24 @@ module.exports = function listen(server){
 };
 
 function loop(){
-    for(p in players){
+    for(var p in players){
         players[p].update();
     }
-    sendPlayerList();
+    // sendPlayerList();
+    sendPlayerUpdate();
 }
 
 function sendPlayerList(){
     io.sockets.emit('players',players);
+}
+function sendPlayerUpdate(){
+    var package = {};
+    for (var id in players){
+        if (players[id].positionChanged){
+            package[id] = {position:players[id].position};
+        }
+    }
+    io.sockets.emit('playerUpdates',package);
 }
 function playerPositionUpdate(id){
     io.sockets.emit('playermoved',{id:id,position:players[id].position})
