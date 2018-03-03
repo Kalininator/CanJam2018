@@ -34,10 +34,10 @@ $(function(){
         }
         drawPlayers();
     });
-    socket.on('playermoved',function(data){
-        players[data.id].position = data.position;
-        drawPlayers();
-    });
+    // socket.on('playermoved',function(data){
+    //     players[data.id].position = data.position;
+    //     drawPlayers();
+    // });
 
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
@@ -87,7 +87,74 @@ function drawPlayer(player,color){
         ctx.arc(pos.x,pos.y,10,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
+    }else{
+        //player outside, draw dot on border
+        drawOffscreenIndicator(pos, 5, 'green');
     }
+}
+
+function drawOffscreenIndicator(pos, radius, color){
+    var dx = pos.x - WIDTH/2;
+    var dy = pos.y - HEIGHT/2;
+    // var dx = WIDTH/2 - pos.x;
+    // var dy = HEIGHT/2 - pos.y;
+    var m = dy/dx;
+    //calc c from center
+    var c = pos.y - (m * pos.x);
+
+    var x, y;
+
+    var x1,x2, y1,y2;
+    x1 = (-c) / m;
+    x2 = (HEIGHT-c)/m;
+
+    y1 = c;
+    y2 = (m * WIDTH) + c;
+
+    if(pos.x <= 0){
+        //left side use y1
+        if (y1 >= 0 && y1 <= HEIGHT){
+            x = 0;
+            y = y1;
+        }else{
+            if(y1 < 0){
+                x = x1;
+                y = 0;
+            }else{
+                x = x2;
+                y = HEIGHT;
+            }
+        }
+    }else if(pos.x >= WIDTH){
+        //right side use y2
+        if(y2 >= 0 && y2 <= HEIGHT){
+            x = WIDTH;
+            y = y2;
+        }else{
+            if(y2 < 0){
+                x = x1;
+                y = 0;
+            }else{
+                x = x2;
+                y = HEIGHT;
+            }
+        }
+    }else{
+        //between
+        if(pos.y <= 0){
+            x = x1;
+            y = 0;
+        }else{
+            x = x2;
+            y = HEIGHT;
+        }
+    }
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x,y,radius,0,2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
 }
 
 function drawPosition(position){
