@@ -24,7 +24,6 @@ module.exports = function listen(server){
             players[socket.id].moveto = data;
         });
 
-
         //inform client of their id
         socket.emit('register',socket.id);
         sendPlayerList();
@@ -42,7 +41,6 @@ function loop(){
 }
 function sendLoop(){
     //send update to clients
-    //not as often to save on network shit, and because it doesnt need to
     sendPlayerUpdate();
 }
 
@@ -50,11 +48,11 @@ function sendPlayerList(){
     io.sockets.emit('players',players);
 }
 function sendPlayerUpdate(){
-    var package = {};
+    var out = {};
     for (var id in players){
         if (players[id].positionChanged){
-            package[id] = {position:players[id].position};
+            out[id] = {position:players[id].position};
         }
     }
-    io.sockets.emit('playerUpdates',package);
+    io.sockets.emit('playerUpdates',out);
 }

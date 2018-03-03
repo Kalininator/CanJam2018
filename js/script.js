@@ -1,5 +1,5 @@
-var id = null;
-var canvas, ctx;
+var id;
+var canvas, ctx, tile;
 var socket;
 var mapPosition;
 var WIDTH, HEIGHT;
@@ -10,7 +10,8 @@ var moveto = null;
 $(function(){
     canvas = $("#canvas")[0];
     ctx = canvas.getContext('2d');
-
+    tile = new Image();
+    tile.src='/res/tile.png';
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     WIDTH = canvas.width;
@@ -63,17 +64,55 @@ function loop(){
 
 function drawPlayers(){
     mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
+    ctx.fillStyle='gray';
     ctx.clearRect(0,0,WIDTH,HEIGHT);
+
+
+    // var ptrn = ctx.createPattern(tile, 'repeat'); // Create a pattern with this image, and set it to "repeat".
+    // ctx.fillStyle = ptrn;
+    // ctx.fillRect(0,0, WIDTH, HEIGHT);
+
+    //draw gridlines
+
+    drawGridlines(16,'#eeeeee');
+    drawGridlines(128,'#cccccc');
+
     for (var player in players) {
         if( players.hasOwnProperty(player) ) {
             if(player == id){
                 drawPlayer(players[player],'red');
             }else{
-                drawPlayer(players[player],'black');
+                drawPlayer(players[player],'green');
             }
         }
     }
 
+}
+
+function drawGridlines(dist, color){
+    var min = getMapPosition({x:0,y:0});
+    var max = getMapPosition({x:WIDTH,y:HEIGHT});
+    var offset = {x:-min.x%dist,y:-min.y%dist};
+    var count = {
+        x:Math.floor((max.x-min.x)/dist)+1,
+        y:Math.floor((max.y-min.y)/dist)+1
+    };
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    for(var x = 0; x < count.x; x ++){
+        var xpos = (x*dist)+offset.x;
+        ctx.moveTo(xpos+0.5,0.5);
+        ctx.lineTo(xpos+0.5,HEIGHT+0.5);
+    }
+
+    for(var y = 0; y < count.y; y ++){
+        var ypos = (y*dist)+offset.y;
+        ctx.moveTo(0.5,ypos+0.5);
+        ctx.lineTo(WIDTH+0.5,ypos+0.5);
+    }
+
+    ctx.closePath();
+    ctx.stroke();
 }
 
 function drawPlayer(player,color){
@@ -192,6 +231,13 @@ function drawPosition(position){
     var newy = (HEIGHT/2) + mapPosition.y + position.y;
     return {x:newx,y:newy};
 }
+function getMapPosition(position){
+    var newx = position.x - mapPosition.x - (WIDTH/2);
+    var newy = position.y - mapPosition.y - (HEIGHT/2);
+    return {x:newx,y:newy};
+}
+
+
 function getTouchPos(evt) {
     var rect = canvas.getBoundingClientRect();
     if(evt.touches == null){
