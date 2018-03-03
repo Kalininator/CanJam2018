@@ -1,5 +1,5 @@
 var id;
-var canvas, ctx, tile;
+var canvas, ctx;
 var socket;
 var mapPosition;
 var WIDTH, HEIGHT;
@@ -10,8 +10,6 @@ var moveto = null;
 $(function(){
     canvas = $("#canvas")[0];
     ctx = canvas.getContext('2d');
-    tile = new Image();
-    tile.src='/res/tile.png';
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     WIDTH = canvas.width;
@@ -66,11 +64,6 @@ function drawPlayers(){
     mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
     ctx.fillStyle='gray';
     ctx.clearRect(0,0,WIDTH,HEIGHT);
-
-
-    // var ptrn = ctx.createPattern(tile, 'repeat'); // Create a pattern with this image, and set it to "repeat".
-    // ctx.fillStyle = ptrn;
-    // ctx.fillRect(0,0, WIDTH, HEIGHT);
 
     //draw gridlines
 
