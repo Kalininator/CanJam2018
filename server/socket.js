@@ -58,6 +58,3 @@ function sendPlayerUpdate(){
     }
     io.sockets.emit('playerUpdates',package);
 }
-// function playerPositionUpdate(id){
-//     io.sockets.emit('playermoved',{id:id,position:players[id].position})
-// }

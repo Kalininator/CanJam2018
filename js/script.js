@@ -34,10 +34,6 @@ $(function(){
         }
         drawPlayers();
     });
-    // socket.on('playermoved',function(data){
-    //     players[data.id].position = data.position;
-    //     drawPlayers();
-    // });
 
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
@@ -90,7 +86,6 @@ function drawPlayer(player,color){
         ctx.fill();
     }else{
         //player outside, draw dot on border
-        // drawOffscreenIndicator(pos, 5, 'green');
         offscreen = getOffscreenPosition(pos);
         ctx.fillStyle = color;
         ctx.beginPath();
