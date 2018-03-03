@@ -84,11 +84,13 @@ function drawPlayers(){
 
 function drawPlayer(player,color){
     pos = drawPosition(player.position);
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(pos.x,pos.y,10,0,2*Math.PI);
-    ctx.closePath();
-    ctx.fill();
+    if(pos.x >= 0 && pos.x <= WIDTH && pos.y >= 0 && pos.y <= HEIGHT){
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(pos.x,pos.y,10,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+    }
 }
 
 function drawPosition(position){
