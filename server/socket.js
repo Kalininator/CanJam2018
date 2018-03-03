@@ -1,5 +1,5 @@
 var io;
-var utils = require('./utils');
+var util = require('./utils');
 var Player = require('./Player');
 var players = {};
 
@@ -8,7 +8,9 @@ module.exports = function listen(server){
 
     io.on('connection', function(socket) {
         //register new player
-        players[socket.id] = new Player({x:utils.rand(-400,400),y:utils.rand(-400,400)});
+
+        player = new Player({x:util.rand(-400,400),y:util.rand(-400,400)});
+        players[socket.id] = player;
         //unregister player
         socket.on('disconnect',function(){
             console.log("disconnect: " + socket.id);
@@ -20,11 +22,21 @@ module.exports = function listen(server){
            playerPositionUpdate(socket.id);
         });
 
+
         //inform client of their id
         socket.emit('register',socket.id);
         sendPlayerList();
     });
+
+    setInterval(loop, 1000/30);
 };
+
+function loop(){
+    for(p in players){
+        players[p].update();
+    }
+    sendPlayerList();
+}
 
 function sendPlayerList(){
     io.sockets.emit('players',players);
@@ -32,7 +44,3 @@ function sendPlayerList(){
 function playerPositionUpdate(id){
     io.sockets.emit('playermoved',{id:id,position:players[id].position})
 }
-
-// function Player(position){
-//     this.position = position;
-// }
