@@ -22,7 +22,7 @@ $(function(){
     socket.on('register',function(data){
         id = data;
         console.log("socket id: " + id);
-        setInterval(loop, 1000/30);
+        setInterval(loop, 1000/60);
     });
     socket.on('players',function(data){
         players = data;
@@ -54,19 +54,16 @@ $(function(){
 });
 
 function loop(){
-    //move player if mouse down
+    //movement updates
     if(moveto != null && mousedown){
         // console.log(moveto);
-        Move(moveto);
+        norm = normaliseVec(moveto,5);
+        players[id].position.x += norm.x;
+        players[id].position.y += norm.y;
+        drawPlayers();
     }
 }
 
-function Move(vec){
-    norm = normaliseVec(vec,5);
-    players[id].position.x += norm.x;
-    players[id].position.y += norm.y;
-    drawPlayers();
-}
 
 function drawPlayers(){
     mapPosition = {x:-players[id].position.x,y:-players[id].position.y};

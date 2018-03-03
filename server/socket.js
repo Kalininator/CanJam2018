@@ -30,14 +30,19 @@ module.exports = function listen(server){
         sendPlayerList();
     });
 
-    setInterval(loop, 1000/30);
+    setInterval(loop, 1000/60);
+    setInterval(sendLoop,1000/30);
 };
 
 function loop(){
+    //do movement updates
     for(var p in players){
         players[p].update();
     }
-    // sendPlayerList();
+}
+function sendLoop(){
+    //send update to clients
+    //not as often to save on network shit, and because it doesnt need to
     sendPlayerUpdate();
 }
 
@@ -53,6 +58,6 @@ function sendPlayerUpdate(){
     }
     io.sockets.emit('playerUpdates',package);
 }
-function playerPositionUpdate(id){
-    io.sockets.emit('playermoved',{id:id,position:players[id].position})
-}
+// function playerPositionUpdate(id){
+//     io.sockets.emit('playermoved',{id:id,position:players[id].position})
+// }
