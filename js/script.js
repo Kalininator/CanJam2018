@@ -4,7 +4,6 @@ var socket;
 var mapPosition;
 var WIDTH, HEIGHT;
 var players;
-
 var mousedown = false;
 var moveto = null;
 
@@ -26,7 +25,6 @@ $(function(){
         setInterval(loop, 1000/30);
     });
     socket.on('players',function(data){
-        // console.log(data);
         players = data;
         drawPlayers();
         drawPlayer(players[id],'red');
@@ -42,13 +40,9 @@ $(function(){
     $(canvas).on('mouseup touchend',function(){
         mousedown = false;
     });
-
-    canvas.addEventListener('mousemove',function(evt){
-        moveto = getMousePos(canvas,evt)
-    },false);
-    canvas.addEventListener('touchmove',function(evt){
-        moveto = getTouchPos(canvas,evt)
-    },false);
+    $(canvas).on("mousemove touchmove", function(evt){
+        moveto = getTouchPos(evt);
+    });
 });
 
 function loop(){
@@ -98,26 +92,22 @@ function drawPosition(position){
     var newy = (HEIGHT/2) + mapPosition.y + position.y;
     return {x:newx,y:newy};
 }
-
-function getMousePos(canvas, evt) {
+function getTouchPos(evt) {
     var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left - (WIDTH/2),
-        y: evt.clientY - rect.top - (HEIGHT/2)
-    };
-}
-function getTouchPos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    var touch = evt.touches[0];
-    return {
-        x: touch.clientX - rect.left - (WIDTH/2),
-        y: touch.clientY - rect.top - (HEIGHT/2)
-    };
+    if(evt.touches == null){
+        return {
+            x: evt.clientX - rect.left - (WIDTH/2),
+            y: evt.clientY - rect.top - (HEIGHT/2)
+        };
+    }else{
+        var touch = evt.touches[0];
+        return {
+            x: touch.clientX - rect.left - (WIDTH/2),
+            y: touch.clientY - rect.top - (HEIGHT/2)
+        };
+    }
 }
 function normaliseVec(vec,speed){
-    // multi = (vec.x + vec.y) / len;
-    // return {x:vec.x*multi,y:vec.y*multi};
-    //get current len
     var len = Math.sqrt((vec.x*vec.x)+(vec.y*vec.y));
     var multi = len / speed;
     return {x:vec.x/multi,y:vec.y/multi};
