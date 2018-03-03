@@ -14,6 +14,11 @@ module.exports = function listen(server){
             delete players[socket.id];
             sendPlayerList();
         });
+        socket.on('moved',function(data){
+           players[socket.id].position = data;
+           playerPositionUpdate(socket.id);
+           // sendPlayerList();
+        });
 
         //inform client of their id
         socket.emit('register',socket.id);
@@ -23,6 +28,9 @@ module.exports = function listen(server){
 
 function sendPlayerList(){
     io.sockets.emit('players',players);
+}
+function playerPositionUpdate(id){
+    io.sockets.emit('playermoved',{id:id,position:players[id].position})
 }
 
 function Player(position){
