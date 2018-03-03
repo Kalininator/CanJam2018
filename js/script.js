@@ -36,12 +36,6 @@ $(function(){
 
 function drawPlayers(){
     ctx.clearRect(0,0,windowSize.x,windowSize.y);
-    //draw mid point
-    ctx.fillStyle = 'green';
-    ctx.beginPath();
-    ctx.arc(windowSize.x/2,windowSize.y/2,2,0,2*Math.PI);
-    ctx.closePath();
-    ctx.fill();
     for (var player in players) {
         if( players.hasOwnProperty(player) ) {
             if(player == id){
