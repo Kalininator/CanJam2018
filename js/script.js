@@ -28,34 +28,27 @@ $(function(){
     socket.on('players',function(data){
         // console.log(data);
         players = data;
-        mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
         drawPlayers();
         drawPlayer(players[id],'red');
     });
     socket.on('playermoved',function(data){
         players[data.id].position = data.position;
-        mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
         drawPlayers();
     });
 
-
-    canvas.addEventListener('mousedown',function(evt){
+    $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
-        moveto = getMousePos(canvas,evt);
-    },false);
-    canvas.addEventListener('mouseup',function(evt){
+    });
+    $(canvas).on('mouseup touchend',function(){
         mousedown = false;
-    },false);
+    });
+
     canvas.addEventListener('mousemove',function(evt){
         moveto = getMousePos(canvas,evt)
     },false);
-    
-    // canvas.addEventListener('click', function(evt) {
-    //     var mousePos = getMousePos(canvas, evt);
-    //     mousePos.x -= WIDTH/2;
-    //     mousePos.y -= HEIGHT/2;
-    //     console.log(mousePos);
-    // }, false);
+    canvas.addEventListener('touchmove',function(evt){
+        moveto = getTouchPos(canvas,evt)
+    },false);
 });
 
 function loop(){
@@ -76,6 +69,7 @@ function Move(vec){
 }
 
 function drawPlayers(){
+    mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
     ctx.clearRect(0,0,WIDTH,HEIGHT);
     for (var player in players) {
         if( players.hasOwnProperty(player) ) {
@@ -108,6 +102,14 @@ function getMousePos(canvas, evt) {
     return {
         x: evt.clientX - rect.left - (WIDTH/2),
         y: evt.clientY - rect.top - (HEIGHT/2)
+    };
+}
+function getTouchPos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    var touch = evt.touches[0];
+    return {
+        x: touch.clientX - rect.left - (WIDTH/2),
+        y: touch.clientY - rect.top - (HEIGHT/2)
     };
 }
 function normaliseVec(vec,speed){
