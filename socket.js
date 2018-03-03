@@ -1,10 +1,34 @@
+var io;
+var players = {};
 
 
 module.exports = function listen(server){
-    var io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server);
 
     io.on('connection', function(socket) {
-        // Use socket to communicate with this particular client only, sending it it's own id
-        socket.emit('position', { x:30,y:50 });
+        //register new player
+        players[socket.id] = new Player({x:rand(-50,50),y:rand(-50,50)});
+        //unregister player
+        socket.on('disconnect',function(){
+            console.log("disconnect: " + socket.id);
+            delete players[socket.id];
+            sendPlayerList();
+        });
+
+        //inform client of their id
+        socket.emit('register',socket.id);
+        sendPlayerList();
     });
 };
+
+function sendPlayerList(){
+    io.sockets.emit('players',players);
+}
+
+function Player(position){
+    this.position = position;
+}
+
+function rand(min,max){
+    return Math.floor(Math.random() * (max-min)) + min
+}
