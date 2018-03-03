@@ -77,6 +77,7 @@ function drawPlayers(){
             }
         }
     }
+
 }
 
 function drawPlayer(player,color){
@@ -155,6 +156,32 @@ function drawOffscreenIndicator(pos, radius, color){
     ctx.arc(x,y,radius,0,2*Math.PI);
     ctx.closePath();
     ctx.fill();
+
+
+    ctx.font = '15pt Calibri';
+    ctx.textBaseline = 'middle';
+    var tx;
+    if(x == WIDTH){
+        ctx.textAlign='right';
+        tx = WIDTH - 10;
+    }else if(x == 0){
+        ctx.textAlign='left';
+        tx = 10;
+    }else{
+        ctx.textAlign = 'center';
+        tx = x;
+    }
+    var ty;
+    if(y <= 20){
+        ty = 20;
+    }else if(y >= (HEIGHT - 20)){
+        ty = HEIGHT - 20;
+    }else{
+        ty = y;
+    }
+    var distance = Math.abs(dx) + Math.abs(dy);
+    ctx.fillText(Math.round(distance/10) + "m",tx,ty);
+
 }
 
 function drawPosition(position){
