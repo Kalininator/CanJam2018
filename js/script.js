@@ -1,9 +1,10 @@
-var id;
+var id = null;
 var canvas, ctx;
 var socket;
 var mapPosition;
 var WIDTH, HEIGHT;
-var players;
+var players = {};
+var objectives = {};
 var mousedown = false;
 var moveto = null;
 
@@ -25,13 +26,24 @@ $(function(){
     });
     socket.on('players',function(data){
         players = data;
-        drawPlayers();
+        draw();
     });
     socket.on('playerUpdates',function(data){
         for (var id in data){
             players[id].position = data[id].position;
         }
-        drawPlayers();
+        draw();
+    });
+    socket.on('newObjective',function(data){
+        objectives[data.id] = data.objective;
+        draw();
+    });
+    socket.on('removeObjective',function(data){
+        delete objectives[data];
+    });
+    socket.on('objectives',function(data){
+        objectives = data;
+        draw();
     });
 
     $(canvas).on('mousedown touchstart',function(){
@@ -55,12 +67,12 @@ function loop(){
         norm = normaliseVec(moveto,5);
         players[id].position.x += norm.x;
         players[id].position.y += norm.y;
-        drawPlayers();
+        draw();
     }
 }
 
 
-function drawPlayers(){
+function draw(){
     mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
     ctx.fillStyle='gray';
     ctx.clearRect(0,0,WIDTH,HEIGHT);
@@ -70,6 +82,15 @@ function drawPlayers(){
     drawGridlines(16,'#eeeeee');
     drawGridlines(128,'#cccccc');
 
+
+    //draw objectives
+    for (var o in objectives){
+        if(objectives.hasOwnProperty(o)){
+            drawObjective(objectives[o],'blue');
+        }
+    }
+
+    //draw players
     for (var player in players) {
         if( players.hasOwnProperty(player) ) {
             if(player == id){
@@ -108,9 +129,32 @@ function drawGridlines(dist, color){
     ctx.stroke();
 }
 
+function drawObjective(objective,color){
+    pos = drawPosition(objective.position);
+    if(isOnScreen(pos)){
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(pos.x,pos.y,20,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+    }else{
+        //player outside, draw dot on border
+        offscreen = getOffscreenPosition(pos);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(offscreen.x,offscreen.y,10,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+        ctx.font = '15pt Calibri';
+        ctx.textAlign = offscreen.textAlign;
+        ctx.textBaseline = offscreen.textBaseline;
+        ctx.fillText(objective.points + "pts",offscreen.text_x,offscreen.text_y);
+    }
+}
+
 function drawPlayer(player,color){
     pos = drawPosition(player.position);
-    if(pos.x >= 0 && pos.x <= WIDTH && pos.y >= 0 && pos.y <= HEIGHT){
+    if(isOnScreen(pos)){
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(pos.x,pos.y,10,0,2*Math.PI);
@@ -129,6 +173,10 @@ function drawPlayer(player,color){
         ctx.textBaseline = offscreen.textBaseline;
         ctx.fillText(offscreen.distance + "m",offscreen.text_x,offscreen.text_y);
     }
+}
+
+function isOnScreen(pos){
+    return pos.x >= 0 && pos.x <= WIDTH && pos.y >= 0 && pos.y <= HEIGHT;
 }
 
 function getOffscreenPosition(pos){
