@@ -2,17 +2,24 @@ var io;
 var util = require('./utils');
 var Player = require('./Player');
 var Objective = require('./Objective');
+var Buff = require('./Buff');
 var Map = require('./Map');
 var map;
 var players = {};
 var objectives = {};
+var buffs = {};
 var objectiveCount = 0;
 
 module.exports = function listen(server){
     map = new Map(2);
     io = require('socket.io').listen(server);
 
+    var b = new Buff(0,3,5000);
+    buffs[util.guid()] = b;
+
     io.on('connection', connection);
+
+
 
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
@@ -36,10 +43,20 @@ function connection(socket){
             radius: players[p].radius
         };
     }
+    var blist = {};
+    for (var b in buffs){
+        blist[b] = {
+            angle:buffs[b].angle,
+            distanceMod:buffs[b].distanceMod,
+            size:buffs[b].size,
+            up:buffs[b].up
+        }
+    }
     socket.emit('register',{
         id:socket.id,
         mapsize: map.size,
         players: plist,
+        buffs:blist,
         objectives: objectives,
         scoreboard: getScoreboard()
     });
@@ -98,6 +115,40 @@ function loop(){
                 completeObjective(p,o);
             }
         }
+        //check if hit a buff
+        for(var b in buffs){
+            if(buffs[b].up){
+                var pos = util.anlePos(buffs[b].angle,buffs[b].distanceMod * map.size);
+                var buffrect = {
+                    x:pos.x-(buffs[b].size/2),
+                    y:pos.y-(buffs[b].size/2),
+                    w:buffs[b].size,
+                    h:buffs[b].size
+                };
+                if(util.collideRectCircle(buffrect,{
+                        x:players[p].position.x,
+                        y:players[p].position.y,
+                        r:players[p].radius
+                    })){
+                    //buff activate
+                    players[p].speed += 3;
+                    setTimeout(function(){
+                        players[p].speed -= 3;
+                    },buffs[b].duration);
+                    io.sockets.emit('speedbuff',{
+                        id:p,
+                        amount:3,
+                        duration:buffs[b].duration,
+                        buffid:b,
+                        cooldown:buffs[b].cooldown
+                    });
+                    buffs[b].up = false;
+                    setTimeout(function(){
+                        buffs[b].up = true;
+                    },buffs[b].cooldown);
+                }
+            }
+        }
     }
     var d = new Date();
     var currenttime = d.getTime();
@@ -134,7 +185,7 @@ function spawnLoop(){
     if(objectiveCount < Math.max(playercount +1,2)){
         if(Math.random() > 0.75){
             //spawn big
-            addObjective(util.randMapPosition(map.size*4 + 30,map.size*6 - 30),util.rand(600,1000),map.size*50);
+            addObjective(util.randMapPosition(map.size*6 + 30,map.size*7 - 30),util.rand(600,1000),map.size*50);
         }else{
             //spawn small objective
             addObjective(util.randMapPosition(0,map.size*2 - 20),util.rand(50,300),3000);

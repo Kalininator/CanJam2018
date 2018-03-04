@@ -5,6 +5,7 @@ var mapPosition;
 var WIDTH, HEIGHT;
 var players = {};
 var objectives = {};
+var buffs = {};
 var scoreboard = [];
 var mousedown = false;
 var moveto = null;
@@ -27,6 +28,7 @@ $(function(){
         id = data.id;
         mapSize = data.mapsize;
         players = data.players;
+        buffs = data.buffs;
         objectives = data.objectives;
         scoreboard = data.scoreboard;
         draw();
@@ -92,6 +94,22 @@ $(function(){
         // draw();
     });
 
+    socket.on('speedbuff',function(data){
+       if(data.id == id){
+           console.log(players[id].speed);
+           players[id].speed += data.amount;
+           console.log(players[id].speed);
+           setTimeout(function(){
+               players[id].speed -= data.amount;
+               console.log(players[id].speed);
+           },data.duration);
+       }
+       buffs[data.buffid].up = false;
+       setTimeout(function(){
+           buffs[data.buffid].up = true;
+       },data.cooldown);
+    });
+
     //listeners for movement controls
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
@@ -132,6 +150,15 @@ function draw(){
         }
     }
 
+    //draw buffs
+    for (var buff in buffs){
+        if(buffs.hasOwnProperty(buff)){
+            if(buffs[buff].up){
+                drawBuff(buffs[buff],'purple');
+            }
+        }
+    }
+
     //draw players
     for (var player in players) {
         if( players.hasOwnProperty(player) ) {
@@ -164,13 +191,13 @@ function draw(){
 
 function drawMap(){
     ctx.fillStyle='gray';
-    ctx.clearRect(0,0,WIDTH,HEIGHT);
+    ctx.fillRect(0,0,WIDTH,HEIGHT);
 
     // draw gridlines
 
-    drawGridlines(16,'#e0e0e0');
+    drawGridlines(256,'#e0e0e0');
     drawGridlines(128,'#cccccc');
-    drawGridlines(256,'#aaaaaa');
+    drawGridlines(16,'#aaaaaa');
     drawArclines(mapsize*6,'#e0e0e0',36);
     //draw map circles
     // var playercount = Object.keys(players).length;
@@ -179,21 +206,21 @@ function drawMap(){
     //bounty area
     ctx.fillStyle = '#ccffcc';
     ctx.beginPath();
-    ctx.arc(center.x,center.y,mapsize*6,0,2*Math.PI);
+    ctx.arc(center.x,center.y,mapsize*7,0,2*Math.PI);
     ctx.closePath();
     ctx.fill();
 
     //trap area
     ctx.fillStyle = '#ffb3b3';
     ctx.beginPath();
-    ctx.arc(center.x,center.y,mapsize*4,0,2*Math.PI);
+    ctx.arc(center.x,center.y,mapsize*6,0,2*Math.PI);
     ctx.closePath();
     ctx.fill();
 
     //spawn area
     ctx.fillStyle = '#ccffff';
     ctx.beginPath();
-    ctx.arc(center.x,center.y,mapsize*3,0,2*Math.PI);
+    ctx.arc(center.x,center.y,mapsize*4,0,2*Math.PI);
     ctx.closePath();
     ctx.fill();
 
@@ -204,11 +231,8 @@ function drawMap(){
     ctx.closePath();
     ctx.fill();
 
-
-
-
-    drawArclines(mapsize*6,'#e0e0e0',12);
-    drawArclines(mapsize*6,'#cccccc',4);
+    drawArclines(mapsize*7,'#e0e0e0',12);
+    drawArclines(mapsize*7,'#cccccc',4);
 }
 
 function drawGridlines(dist, color){
@@ -249,6 +273,13 @@ function drawArclines(dist,color,qty){
     }
     ctx.closePath();
     ctx.stroke();
+}
+
+function drawBuff(buff,color){
+    var angpos = anglePos(buff.angle,buff.distanceMod*mapsize);
+    pos = drawPosition(angpos);
+    ctx.fillStyle = color;
+    ctx.fillRect(pos.x-(buff.size/2),pos.y-(buff.size/2),buff.size,buff.size);
 }
 
 function drawObjective(objective,color){
@@ -437,7 +468,12 @@ function getMapPosition(position){
     var newy = position.y - mapPosition.y - (HEIGHT/2);
     return {x:newx,y:newy};
 }
-
+function anglePos(angle,distance){
+    return {
+        x:Math.cos(angle) * distance,
+        y:Math.sin(angle) * distance
+    }
+}
 
 function getTouchPos(evt) {
     var rect = canvas.getBoundingClientRect();
