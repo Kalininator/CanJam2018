@@ -111,6 +111,7 @@ function sendPlayerUpdate(){
     for (var id in players){
         if (players[id].positionChanged){
             out[id] = {position:players[id].position};
+            players[id].positionChanged = false;
         }
     }
     io.sockets.emit('playerUpdates',out);
