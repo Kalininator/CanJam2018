@@ -6,6 +6,7 @@ var WIDTH, HEIGHT;
 var players = {};
 var objectives = {};
 var buffs = {};
+var traps = {};
 var scoreboard = [];
 var mousedown = false;
 var moveto = null;
@@ -29,6 +30,7 @@ $(function(){
         mapSize = data.mapsize;
         players = data.players;
         buffs = data.buffs;
+        traps = data.traps;
         objectives = data.objectives;
         scoreboard = data.scoreboard;
         draw();
@@ -108,6 +110,22 @@ $(function(){
        },data.cooldown);
     });
 
+    socket.on('stunnedplayers',function(data){
+        console.log(data.players);
+        if(data.players.includes(id)){
+            //stunned
+            console.log('im stunned');
+            players[id].stunned = true;
+            setTimeout(function(){
+                players[id].stunned = false;
+                console.log('unstunned');
+            },data.duration);
+        }
+        traps[data.trapid].up = false;
+        setTimeout(function(){
+            traps[data.trapid].up = true;
+        },Math.max(2000,data.cooldownMod-mapsize));
+    });
     //listeners for movement controls
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
@@ -125,7 +143,7 @@ $(function(){
 
 function loop(){
     //movement updates
-    if(moveto != null && mousedown){
+    if(moveto != null && mousedown && !players[id].stunned){
         // console.log(moveto);
         norm = normaliseVec(moveto,players[id].speed);
         players[id].position.x += norm.x;
@@ -153,6 +171,15 @@ function draw(){
         if(buffs.hasOwnProperty(buff)){
             if(buffs[buff].up){
                 drawBuff(buffs[buff],'purple');
+            }
+        }
+    }
+
+    //draw traps
+    for (var trap in traps){
+        if(traps.hasOwnProperty(trap)){
+            if(traps[trap].up){
+                drawTrap(traps[trap],'red');
             }
         }
     }
@@ -279,6 +306,12 @@ function drawBuff(buff,color){
     ctx.fillStyle = color;
     ctx.fillRect(pos.x-(buff.size/2),pos.y-(buff.size/2),buff.size,buff.size);
 }
+function drawTrap(trap,color){
+    var angpos = anglePos(trap.angle,trap.distanceMod*mapsize);
+    pos = drawPosition(angpos);
+    ctx.fillStyle = color;
+    ctx.fillRect(pos.x-(trap.size/2),pos.y-(trap.size/2),trap.size,trap.size);
+}
 
 function drawObjective(objective,color){
     pos = drawPosition(anglePos(objective.angle,objective.distanceMod * mapsize));
@@ -293,7 +326,6 @@ function drawObjective(objective,color){
             ctx.strokeStyle=color;
             ctx.stroke();
             ctx.lineWidth = 1;
-
             ctx.beginPath();
             ctx.fillStyle = color;
             ctx.arc(pos.x,pos.y,objective.radius*0.9,Math.PI / 2,(Math.PI/2) + (Math.PI * 2) * ((objective.expiretime - currentTime) / objective.duration));

@@ -3,11 +3,13 @@ var util = require('./utils');
 var Player = require('./Player');
 var Objective = require('./Objective');
 var Buff = require('./Buff');
+var StunTrap = require('./StunTrap');
 var Map = require('./Map');
 var map;
 var players = {};
 var objectives = {};
 var buffs = {};
+var traps = {};
 var objectiveCount = 0;
 
 module.exports = function listen(server){
@@ -17,6 +19,7 @@ module.exports = function listen(server){
     for(var i = 0; i < 2*Math.PI; i += Math.PI/4){
         // var b = new Buff(i,3,5000);
         buffs[util.guid()] = new Buff(i,3.5,10,4000);
+        traps[util.guid()] = new StunTrap(i + (Math.PI/8),5,5000);
     }
 
     io.on('connection', connection);
@@ -24,6 +27,11 @@ module.exports = function listen(server){
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
     spawnLoop();
+};
+
+Array.prototype.remove = function (target) {
+    this.splice(this.indexOf(target), 1);
+    return this;
 };
 
 function connection(socket){
@@ -40,7 +48,8 @@ function connection(socket){
             position:players[p].position,
             name: players[p].name,
             speed: players[p].speed,
-            radius: players[p].radius
+            radius: players[p].radius,
+            stunned: players[p].stunned
         };
     }
     var blist = {};
@@ -52,11 +61,22 @@ function connection(socket){
             up:buffs[b].up
         }
     }
+    var tlist = {};
+    for (var t in traps){
+        tlist[t] = {
+            angle:traps[t].angle,
+            distanceMod:traps[t].distanceMod,
+            cooldownMod:traps[t].cooldownMod,
+            size:traps[t].size,
+            up:traps[t].up
+        };
+    }
     socket.emit('register',{
         id:socket.id,
         mapsize: map.size,
         players: plist,
         buffs:blist,
+        traps:tlist,
         objectives: objectives,
         scoreboard: getScoreboard()
     });
@@ -146,6 +166,58 @@ function loop(){
                         cooldown:buffs[b].cooldown
                     });
                     buffs[b].goDown();
+                }
+            }
+        }
+        //check if hit a trap
+        for(var t in traps){
+            if(traps[t].up){
+                var trap = traps[t];
+                var pos = util.anglePos(trap.angle,trap.distanceMod * map.size);
+                var traprect = {
+                    x:pos.x-(trap.size/2),
+                    y:pos.y-(trap.size/2),
+                    w:trap.size,
+                    h:trap.size
+                };
+                if(util.collideRectCircle(traprect,{
+                        x:players[p].position.x,
+                        y:players[p].position.y,
+                        r:players[p].radius
+                    })){
+                    //buff activate
+                    var trappedplayerids = [];
+                    //get nearby enemies
+                    for(var _p in players){
+                        var _player = players[_p];
+                        var _dist = util.distance(_player.position,pos);
+                        if(_dist < 150){
+                            trappedplayerids.push(_p);
+                        }
+                    }
+                    trappedplayerids.remove(p);
+
+                    console.log(trappedplayerids);
+                    for (var _p in trappedplayerids){
+                        if(players.hasOwnProperty(trappedplayerids[_p])){
+                            players[trappedplayerids[_p]].stunned = true;
+                        }
+                    }
+                    setTimeout(function(){
+                        for (var __p in trappedplayerids) {
+                            if (players.hasOwnProperty(trappedplayerids[__p])) {
+                                players[trappedplayerids[__p]].stunned = false;
+                            }
+                        }
+                    },1000);
+                    io.sockets.emit('stunnedplayers',{
+                        players:trappedplayerids,
+                        trapid:t,
+                        duration:1000,
+                        cooldownMod:traps[t].cooldownMod
+                    });
+                    traps[t].goDown(map.size);
+
                 }
             }
         }

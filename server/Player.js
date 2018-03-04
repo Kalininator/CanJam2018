@@ -5,13 +5,14 @@ module.exports = function(position){
     this.moveto = null;
     this.positionChanged = false;
     this.buffed = false;
+    this.stunned = false;
     this.speed = 4;
     this.radius = 10;
     this.points = 0;
     this.name = utils.playerguid();
     this.update = function(){
         //movement
-        if (this.moveto != null && this.mousedown){
+        if (this.moveto != null && this.mousedown && !this.stunned){
             norm = utils.normaliseVec(this.moveto,this.speed);
             this.position.x += norm.x;
             this.position.y += norm.y;
