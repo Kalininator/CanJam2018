@@ -121,6 +121,48 @@ function loop(){
 
 function draw(){
     mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
+
+    drawMap();
+
+
+    //draw objectives
+    for (var o in objectives){
+        if(objectives.hasOwnProperty(o)){
+            drawObjective(objectives[o],'blue');
+        }
+    }
+
+    //draw players
+    for (var player in players) {
+        if( players.hasOwnProperty(player) ) {
+            if(player == id){
+                drawPlayer(players[player],'red');
+            }else{
+                drawPlayer(players[player],'green');
+            }
+        }
+    }
+
+    //draw scoreboard
+    // ctx.fillStyle = 'white';
+    // ctx.fillRect(20,20,170,(scoreboard.length + 2)*20);
+    ctx.fillStyle = 'black';
+    ctx.textAlign='left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('Scores:',30,30);
+    //draw scores
+    for(var i = 0; i < scoreboard.length; i ++){
+        if(scoreboard[i][0] == players[id].name){
+            ctx.fillStyle='red';
+            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+            ctx.fillStyle='black';
+        }else{
+            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+        }
+    }
+}
+
+function drawMap(){
     ctx.fillStyle='gray';
     ctx.clearRect(0,0,WIDTH,HEIGHT);
 
@@ -163,44 +205,6 @@ function draw(){
     drawGridlines(16,'#e0e0e0');
     drawGridlines(128,'#cccccc');
     drawGridlines(256,'#aaaaaa');
-
-
-
-    //draw objectives
-    for (var o in objectives){
-        if(objectives.hasOwnProperty(o)){
-            drawObjective(objectives[o],'blue');
-        }
-    }
-
-    //draw players
-    for (var player in players) {
-        if( players.hasOwnProperty(player) ) {
-            if(player == id){
-                drawPlayer(players[player],'red');
-            }else{
-                drawPlayer(players[player],'green');
-            }
-        }
-    }
-
-    //draw scoreboard
-    // ctx.fillStyle = 'white';
-    // ctx.fillRect(20,20,170,(scoreboard.length + 2)*20);
-    ctx.fillStyle = 'black';
-    ctx.textAlign='left';
-    ctx.textBaseline = 'top';
-    ctx.fillText('Scores:',30,30);
-    //draw scores
-    for(var i = 0; i < scoreboard.length; i ++){
-        if(scoreboard[i][0] == players[id].name){
-            ctx.fillStyle='red';
-            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
-            ctx.fillStyle='black';
-        }else{
-            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
-        }
-    }
 }
 
 function drawGridlines(dist, color){

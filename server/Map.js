@@ -3,9 +3,9 @@ module.exports = function(playercount){
     this.update = function(playercount){
         var preferredSize = Math.round(Math.sqrt(playercount) * 50);
         if(this.size < preferredSize - 1){
-            this.size += 0.2;
+            this.size += 0.05;
         }else if(this.size > preferredSize + 1){
-            this.size -= 0.2;
+            this.size -= 0.05;
         }
     };
 };

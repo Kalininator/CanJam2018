@@ -16,7 +16,9 @@ module.exports = {
         return {x:vec.x/multi,y:vec.y/multi};
     },
     distance: function(a,b){
-        return Math.abs(a.x-b.x) + Math.abs(a.y-b.y);
+        var dx = Math.abs(a.x-b.x);
+        var dy = Math.abs(a.y-b.y);
+        return Math.sqrt((dx * dx) + (dy * dy));
     },
     guid: function(){
         function s4() {

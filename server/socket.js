@@ -131,8 +131,15 @@ function sendLoop(){
 }
 function spawnLoop(){
     var playercount = Object.keys(players).length;
-    if(objectiveCount < Math.max(playercount - 1,2)){
-        addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},util.rand(100,1000),10);
+    if(objectiveCount < Math.max(playercount +1,2)){
+        if(Math.random() > 0.75){
+            //spawn big
+            addObjective(util.randMapPosition(map.size*4 + 30,map.size*6 - 30),util.rand(600,1000),map.size*50);
+        }else{
+            //spawn small objective
+            addObjective(util.randMapPosition(0,map.size*2 - 20),util.rand(50,300),3000);
+        }
+
     }
     setTimeout(spawnLoop,1000/(playercount/2))
 }
@@ -169,5 +176,13 @@ function getScoreboard(){
     sortable.sort(function(a, b) {
         return b[1] - a[1];
     });
+
+    // if(sortable.length > 0)
+    // {
+    //     var top = sortable[0][1];
+    //     for(var i = 0; i < sortable.length; i ++){
+    //         sortable[i][1] = Math.round((sortable[i][1]/top)*100);
+    //     }
+    // }
     return sortable;
 }
