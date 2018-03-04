@@ -21,8 +21,14 @@ $(function(){
 
     socket = io();
     socket.on('register',function(data){
-        id = data;
-        console.log("socket id: " + id);
+        // id = data;
+        // console.log("socket id: " + id);
+        // setInterval(loop, 1000/60);
+        id = data.id;
+        players = data.players;
+        objectives = data.objectives;
+        scoreboard = data.scoreboard;
+        draw();
         setInterval(loop, 1000/60);
     });
     socket.on('players',function(data){

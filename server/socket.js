@@ -9,38 +9,50 @@ var objectiveCount = 0;
 module.exports = function listen(server){
     io = require('socket.io').listen(server);
 
-    io.on('connection', function(socket) {
-        //register new player
-
-        player = new Player({x:util.rand(-400,400),y:util.rand(-400,400)});
-        players[socket.id] = player;
-        //unregister player
-        socket.on('disconnect',function(){
-            console.log("disconnect: " + socket.id);
-            delete players[socket.id];
-            sendPlayerList();
-        });
-        socket.on('changemousedown',function(data){
-            players[socket.id].mousedown = data;
-        });
-        socket.on('changemoveto',function(data){
-            players[socket.id].moveto = data;
-        });
-
-        //inform client of their id
-        socket.emit('register',socket.id);
-        sendPlayerList();
-        sendObjectiveList();
-        generateScoreboard();
-    });
-
-    console.log(util.playerguid());
+    io.on('connection', connection);
 
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
-    // setInterval(spawnLoop,1000);
     spawnLoop();
 };
+
+function connection(socket){
+    //register new player
+
+    player = new Player({x:util.rand(-400,400),y:util.rand(-400,400)});
+    players[socket.id] = player;
+
+
+    //give client initial info
+    var plist = {};
+    for (var p in players){
+        plist[p] = {
+            position:players[p].position,
+            name: players[p].name
+        };
+    }
+    socket.emit('register',{
+        id:socket.id,
+        players: plist,
+        objectives: objectives,
+        scoreboard: getScoreboard()
+    });
+
+    //unregister player
+    socket.on('disconnect',function(){
+        console.log("disconnect: " + socket.id);
+        delete players[socket.id];
+        sendPlayerList();
+    });
+    socket.on('changemousedown',function(data){
+        players[socket.id].mousedown = data;
+    });
+    socket.on('changemoveto',function(data){
+        players[socket.id].moveto = data;
+    });
+
+
+}
 
 function loop(){
     //do movement updates
@@ -63,7 +75,7 @@ function loop(){
                 delete objectives[o];
                 sendObjectiveList();
                 objectiveCount --;
-                generateScoreboard();
+                sendScoreboard();
             }
         }
     }
@@ -104,7 +116,7 @@ function sendPlayerUpdate(){
     io.sockets.emit('playerUpdates',out);
 }
 
-function generateScoreboard(){
+function getScoreboard(){
     var sortable = [];
     for (var p in players){
         sortable.push([players[p].name,players[p].points])
@@ -112,5 +124,8 @@ function generateScoreboard(){
     sortable.sort(function(a, b) {
         return b[1] - a[1];
     });
-    io.sockets.emit('scoreboard',sortable);
+    return sortable;
+}
+function sendScoreboard(){
+    io.sockets.emit('scoreboard',getScoreboard());
 }
