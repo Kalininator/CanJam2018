@@ -294,7 +294,10 @@ function sendMapUpdate(){
     var out = {};
     for (var id in players){
         if (players[id].positionChanged){
-            out[id] = {position:players[id].position};
+            out[id] = {
+                position:players[id].position,
+                speed:players[id].speed
+            };
             players[id].positionChanged = false;
         }
     }

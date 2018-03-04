@@ -83,6 +83,7 @@ $(function(){
         mapsize = data.mapsize;
         for (var id in data.players){
             players[id].position = data.players[id].position;
+            players[id].speed = data.players[id].speed;
         }
     });
 

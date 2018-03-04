@@ -18,6 +18,9 @@ module.exports = function(position){
             this.position.y += norm.y;
             this.positionChanged = true;
         }
+        if(!this.buffed){
+            this.speed = 4;
+        }
     };
     this.setBuffed = function(duration){
         this.buffed = true;
