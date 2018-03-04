@@ -166,6 +166,12 @@ function drawMap(){
     ctx.fillStyle='gray';
     ctx.clearRect(0,0,WIDTH,HEIGHT);
 
+    // draw gridlines
+
+    drawGridlines(16,'#e0e0e0');
+    drawGridlines(128,'#cccccc');
+    drawGridlines(256,'#aaaaaa');
+    drawArclines(mapsize*6,'#e0e0e0',36);
     //draw map circles
     // var playercount = Object.keys(players).length;
     var center = drawPosition({x:0,y:0});
@@ -200,11 +206,9 @@ function drawMap(){
 
 
 
-    //draw gridlines
 
-    drawGridlines(16,'#e0e0e0');
-    drawGridlines(128,'#cccccc');
-    drawGridlines(256,'#aaaaaa');
+    drawArclines(mapsize*6,'#e0e0e0',12);
+    drawArclines(mapsize*6,'#cccccc',4);
 }
 
 function drawGridlines(dist, color){
@@ -229,6 +233,20 @@ function drawGridlines(dist, color){
         ctx.lineTo(WIDTH+0.5,ypos+0.5);
     }
 
+    ctx.closePath();
+    ctx.stroke();
+}
+function drawArclines(dist,color,qty){
+    var center = drawPosition({x:0,y:0});
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    for(var i = 0; i < 2*Math.PI; i += (2*Math.PI)/qty){
+        ctx.moveTo(center.x,center.y);
+        var x = Math.cos(i) * dist;
+        var y = Math.sin(i) * dist;
+        var drawCoords = drawPosition({x:x+0.5,y:y+0.5});
+        ctx.lineTo(drawCoords.x,drawCoords.y);
+    }
     ctx.closePath();
     ctx.stroke();
 }
