@@ -217,7 +217,7 @@ function drawPlayer(player,color){
     if(isOnScreen(pos)){
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(pos.x,pos.y,10,0,2*Math.PI);
+        ctx.arc(pos.x,pos.y,player.radius,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         ctx.font = '15pt Calibri';
@@ -228,7 +228,7 @@ function drawPlayer(player,color){
         offscreen = getOffscreenPosition(pos);
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(offscreen.x,offscreen.y,7,0,2*Math.PI);
+        ctx.arc(offscreen.x,offscreen.y,player.radius*0.7,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         // ctx.font = '15pt Calibri';

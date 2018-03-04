@@ -29,7 +29,8 @@ function connection(socket){
         plist[p] = {
             position:players[p].position,
             name: players[p].name,
-            speed: players[p].speed
+            speed: players[p].speed,
+            radius: players[p].radius
         };
     }
     socket.emit('register',{
