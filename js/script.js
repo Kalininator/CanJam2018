@@ -136,9 +136,9 @@ function draw(){
     for (var player in players) {
         if( players.hasOwnProperty(player) ) {
             if(player == id){
-                drawPlayer(players[player],'red');
-            }else{
                 drawPlayer(players[player],'green');
+            }else{
+                drawPlayer(players[player],'red');
             }
         }
     }
@@ -318,7 +318,8 @@ function drawPlayer(player,color){
         ctx.fill();
         ctx.font = '15pt Calibri';
         ctx.textAlign = 'center';
-        ctx.fillText(player.name,pos.x,pos.y-20);
+        ctx.textBaseline='bottom';
+        ctx.fillText(player.name,pos.x,pos.y-10);
     }else{
         //player outside, draw dot on border
         offscreen = getOffscreenPosition(pos);
