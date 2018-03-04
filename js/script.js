@@ -29,6 +29,13 @@ $(function(){
         scoreboard = data.scoreboard;
         draw();
         setInterval(loop, 1000/60);
+
+        //try setting name
+        var name = location.search.split('name=')[1];
+        if(name){
+            socket.emit('setname',name);
+        }
+
     });
 
     //new player has joined the game
@@ -36,6 +43,11 @@ $(function(){
         //new player has joined
         players[data.id] = data.player;
         draw();
+    });
+
+    //player changed name
+    socket.on('namechange',function(data){
+        players[data.id].name = data.name;
     });
 
     //player left

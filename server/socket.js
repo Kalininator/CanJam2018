@@ -65,6 +65,16 @@ function connection(socket){
         players[socket.id].moveto = data;
     });
 
+    //player name set
+    socket.on('setname',function(data){
+        players[socket.id].name = data;
+        //tell everyone this guy changed his name
+        io.sockets.emit('namechange',{
+            id:socket.id,
+            name:players[socket.id].name
+        });
+    });
+
 
 }
 
