@@ -64,7 +64,7 @@ function loop(){
     //movement updates
     if(moveto != null && mousedown){
         // console.log(moveto);
-        norm = normaliseVec(moveto,5);
+        norm = normaliseVec(moveto,6);
         players[id].position.x += norm.x;
         players[id].position.y += norm.y;
         draw();
@@ -79,7 +79,7 @@ function draw(){
 
     //draw gridlines
 
-    drawGridlines(16,'#eeeeee');
+    drawGridlines(16,'#e0e0e0');
     drawGridlines(128,'#cccccc');
 
 
@@ -142,13 +142,14 @@ function drawObjective(objective,color){
         offscreen = getOffscreenPosition(pos);
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(offscreen.x,offscreen.y,10,0,2*Math.PI);
+        ctx.arc(offscreen.x,offscreen.y,15,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         ctx.font = '15pt Calibri';
         ctx.textAlign = offscreen.textAlign;
         ctx.textBaseline = offscreen.textBaseline;
-        ctx.fillText(objective.points + "pts",offscreen.text_x,offscreen.text_y);
+        // ctx.fillText(objective.points + "pts",offscreen.text_x,offscreen.text_y);
+        ctx.fillText(offscreen.distance + "m",offscreen.text_x,offscreen.text_y);
     }
 }
 
@@ -168,10 +169,10 @@ function drawPlayer(player,color){
         ctx.arc(offscreen.x,offscreen.y,10,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
-        ctx.font = '15pt Calibri';
-        ctx.textAlign = offscreen.textAlign;
-        ctx.textBaseline = offscreen.textBaseline;
-        ctx.fillText(offscreen.distance + "m",offscreen.text_x,offscreen.text_y);
+        // ctx.font = '15pt Calibri';
+        // ctx.textAlign = offscreen.textAlign;
+        // ctx.textBaseline = offscreen.textBaseline;
+        // ctx.fillText(offscreen.distance + "m",offscreen.text_x,offscreen.text_y + 15);
     }
 }
 

@@ -4,7 +4,7 @@ module.exports = function(position){
     this.mousedown = false;
     this.moveto = null;
     this.positionChanged = false;
-    this.speed = 5;
+    this.speed = 6;
     this.points = 0;
     this.update = function(){
         //movement

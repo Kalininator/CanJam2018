@@ -33,10 +33,11 @@ module.exports = function listen(server){
         sendObjectiveList();
     });
 
-    addObjective({x:300,y:300},200);
+
 
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
+    setInterval(spawnLoop,1000);
 };
 
 function loop(){
@@ -52,8 +53,10 @@ function loop(){
                 //chnage to player size + objective size
                 //got objective :)
                 players[p].points += objectives[o].points;
-                io.emit('removeObjective',o);
+                // io.emit('removeObjective',o);
+                sendObjectiveList();
                 delete objectives[o];
+                objectiveCount --;
             }
         }
     }
@@ -63,11 +66,18 @@ function sendLoop(){
     //send update to clients
     sendPlayerUpdate();
 }
+function spawnLoop(){
+    if(objectiveCount < Object.keys(players).length * 2){
+        addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},600);
+    }
+}
 
 function addObjective(position,points){
     var o = new Objective(position,points);
-    objectives[objectiveCount] = o;
+    var guid = util.guid();
+    objectives[guid] = o;
     io.sockets.emit('newObjective',{id:objectiveCount,objective:o});
+    objectiveCount ++;
 }
 
 function sendObjectiveList(){
