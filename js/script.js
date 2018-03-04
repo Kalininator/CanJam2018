@@ -99,10 +99,12 @@ $(function(){
            console.log(players[id].speed);
            players[id].speed += data.amount;
            console.log(players[id].speed);
+           var duration = data.durationMod*mapsize;
+           console.log(duration);
            setTimeout(function(){
                players[id].speed -= data.amount;
                console.log(players[id].speed);
-           },data.duration);
+           },duration);
        }
        buffs[data.buffid].up = false;
        setTimeout(function(){

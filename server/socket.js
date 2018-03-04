@@ -14,9 +14,9 @@ module.exports = function listen(server){
     map = new Map(2);
     io = require('socket.io').listen(server);
 
-    for(var i = 0; i < 2*Math.PI; i += Math.PI/2){
+    for(var i = 0; i < 2*Math.PI; i += Math.PI/4){
         // var b = new Buff(i,3,5000);
-        buffs[util.guid()] = new Buff(i,3,5000);
+        buffs[util.guid()] = new Buff(i,3.5,10,4000);
     }
 
 
@@ -32,7 +32,7 @@ module.exports = function listen(server){
 function connection(socket){
     //register new player
 
-    player = new Player(util.randMapPosition(map.size * 2,map.size*3));
+    player = new Player(util.randMapPosition(map.size * 2.5,map.size*2.5));
     players[socket.id] = player;
 
 
@@ -136,14 +136,14 @@ function loop(){
                     console.log("collide and not buffed");
                     //buff activate
                     players[p].speed += 3;
-                    players[p].setBuffed(buffs[b].duration);
+                    players[p].setBuffed(buffs[b].durationMod * map.size);
                     setTimeout(function(){
                         players[p].speed -= 3;
-                    },buffs[b].duration);
+                    },buffs[b].durationMod * map.size);
                     io.sockets.emit('speedbuff',{
                         id:p,
                         amount:3,
-                        duration:buffs[b].duration,
+                        durationMod:buffs[b].durationMod,
                         buffid:b,
                         cooldown:buffs[b].cooldown
                     });
