@@ -133,7 +133,13 @@ function draw(){
     ctx.fillText('Scores:',30,30);
     //draw scores
     for(var i = 0; i < scoreboard.length; i ++){
-        ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+        if(scoreboard[i][0] == players[id].name){
+            ctx.fillStyle='red';
+            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+            ctx.fillStyle='black';
+        }else{
+            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+        }
     }
 }
 
