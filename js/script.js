@@ -20,10 +20,9 @@ $(function(){
     mapPosition = {x:0,y:0};
 
     socket = io();
+
+    //server sends required data to start drawing
     socket.on('register',function(data){
-        // id = data;
-        // console.log("socket id: " + id);
-        // setInterval(loop, 1000/60);
         id = data.id;
         players = data.players;
         objectives = data.objectives;
@@ -31,32 +30,44 @@ $(function(){
         draw();
         setInterval(loop, 1000/60);
     });
-    socket.on('players',function(data){
-        players = data;
+
+    //new player has joined the game
+    socket.on('newplayer',function(data){
+        //new player has joined
+        players[data.id] = data.player;
         draw();
     });
-    socket.on('playerUpdates',function(data){
+
+    //player left
+    socket.on('playerleft',function(data){
+        delete players[data.id];
+        scoreboard = data.scoreboard;
+        draw();
+    });
+
+    //updated positions of any players that moved
+    socket.on('playerpositions',function(data){
         for (var id in data){
             players[id].position = data[id].position;
         }
         draw();
     });
-    socket.on('newObjective',function(data){
+
+    //objective has been completed
+    socket.on('objectivecomplete',function(data){
+        delete objectives[data.id];
+        if('scoreboard' in data.scoreboard){
+            scoreboard = data.scoreboard;
+        }
+        draw();
+    });
+
+    socket.on('newobjective',function(data){
         objectives[data.id] = data.objective;
         draw();
     });
-    socket.on('removeObjective',function(data){
-        delete objectives[data];
-    });
-    socket.on('objectives',function(data){
-        objectives = data;
-        draw();
-    });
-    socket.on('scoreboard',function(data){
-        scoreboard = data;
-        console.log(data);
-    });
 
+    //listeners for movement controls
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
         socket.emit('changemousedown',true);

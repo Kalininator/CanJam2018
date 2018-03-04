@@ -38,11 +38,23 @@ function connection(socket){
         scoreboard: getScoreboard()
     });
 
+    //tell other clients new player has joined
+
+    io.sockets.emit('newplayer',{
+        id:socket.id,
+        player:plist[socket.id]
+    });
+
     //unregister player
     socket.on('disconnect',function(){
         console.log("disconnect: " + socket.id);
         delete players[socket.id];
-        sendPlayerList();
+        //tell other clients you left
+        io.sockets.emit('playerleft',{
+            id:socket.id,
+            scoreboard:getScoreboard()
+        });
+        // sendPlayerList();
     });
     socket.on('changemousedown',function(data){
         players[socket.id].mousedown = data;
@@ -59,27 +71,29 @@ function loop(){
     for(var p in players){
         //update position
         players[p].update();
-
-
     }
-
     for (var p in players){
         //check if got any objectves
         for(var o in objectives){
             var dist = util.distance(objectives[o].position,players[p].position);
             if(dist < 20 + 10){
-                //chnage to player size + objective size
-                //got objective :)
-                players[p].points += objectives[o].points;
-                // io.emit('removeObjective',o);
-                delete objectives[o];
-                sendObjectiveList();
-                objectiveCount --;
-                sendScoreboard();
+                completeObjective(p,o);
             }
         }
     }
 }
+function completeObjective(p_id,o_id){
+    players[p_id].points += objectives[o_id].points;
+    delete objectives[o_id];
+    //tell clients this objective is complete, and new scoreboard
+    io.sockets.emit('objectivecomplete',{
+        id:o_id,
+        scoreboard:getScoreboard()
+    });
+    objectiveCount --;
+}
+
+
 function sendLoop(){
     //send update to clients
     sendPlayerUpdate();
@@ -96,16 +110,10 @@ function addObjective(position,points){
     var o = new Objective(position,points);
     var guid = util.guid();
     objectives[guid] = o;
-    io.sockets.emit('newObjective',{id:objectiveCount,objective:o});
+    io.sockets.emit('newobjective',{id:guid,objective:o});
     objectiveCount ++;
 }
 
-function sendObjectiveList(){
-    io.sockets.emit('objectives',objectives);
-}
-function sendPlayerList(){
-    io.sockets.emit('players',players);
-}
 function sendPlayerUpdate(){
     var out = {};
     for (var id in players){
@@ -114,19 +122,18 @@ function sendPlayerUpdate(){
             players[id].positionChanged = false;
         }
     }
-    io.sockets.emit('playerUpdates',out);
+    io.sockets.emit('playerpositions',out);
 }
 
 function getScoreboard(){
     var sortable = [];
     for (var p in players){
-        sortable.push([players[p].name,players[p].points])
+        if(players[p].points > 0){
+            sortable.push([players[p].name,players[p].points])
+        }
     }
     sortable.sort(function(a, b) {
         return b[1] - a[1];
     });
     return sortable;
-}
-function sendScoreboard(){
-    io.sockets.emit('scoreboard',getScoreboard());
 }
