@@ -22,7 +22,7 @@ module.exports = function listen(server){
 function connection(socket){
     //register new player
 
-    player = new Player({x:util.rand(-400,400),y:util.rand(-400,400)});
+    player = new Player(util.randMapPosition(map.size * 2,map.size*3));
     players[socket.id] = player;
 
 

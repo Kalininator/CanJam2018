@@ -2,6 +2,14 @@ module.exports = {
     rand: function(min,max){
         return Math.floor(Math.random() * (max-min)) + min
     },
+    randMapPosition: function(min,max){
+        var distance = Math.floor(Math.random() * (max-min)) + min;
+        var angle = Math.random() * 2 * Math.PI;
+        return {
+            x:Math.cos(angle) * distance,
+            y:Math.sin(angle) * distance
+        };
+    },
     normaliseVec: function (vec,speed){
         var len = Math.sqrt((vec.x*vec.x)+(vec.y*vec.y));
         var multi = len / speed;
