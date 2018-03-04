@@ -154,10 +154,10 @@ function draw(){
     for(var i = 0; i < scoreboard.length; i ++){
         if(scoreboard[i][0] == players[id].name){
             ctx.fillStyle='red';
-            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+            ctx.fillText(i + ". " + scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
             ctx.fillStyle='black';
         }else{
-            ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
+            ctx.fillText(i + ". " + scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
         }
     }
 }
@@ -240,13 +240,16 @@ function drawObjective(objective,color){
         if((objective.expiretime - currentTime) > 0){
             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(pos.x,pos.y,objective.radius,0,2*Math.PI);
+            ctx.arc(pos.x,pos.y,objective.radius*0.9,0,2*Math.PI);
             ctx.closePath();
-            ctx.fill();
+            ctx.lineWidth = objective.radius*0.4;
+            ctx.strokeStyle=color;
+            ctx.stroke();
+            ctx.lineWidth = 1;
 
             ctx.beginPath();
-            ctx.fillStyle = 'lightblue';
-            ctx.arc(pos.x,pos.y,objective.radius*0.8,Math.PI / 2,(Math.PI/2) + (Math.PI * 2) * ((objective.expiretime - currentTime) / objective.duration));
+            ctx.fillStyle = color;
+            ctx.arc(pos.x,pos.y,objective.radius*0.9,Math.PI / 2,(Math.PI/2) + (Math.PI * 2) * ((objective.expiretime - currentTime) / objective.duration));
             ctx.lineTo(pos.x,pos.y);
             ctx.closePath();
 
