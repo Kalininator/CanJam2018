@@ -93,6 +93,13 @@ function loop(){
             }
         }
     }
+    var d = new Date();
+    var currenttime = d.getTime();
+    for (var o in objectives){
+        if(currenttime > objectives[o].expiretime){
+            expireObjective(o);
+        }
+    }
 }
 function completeObjective(p_id,o_id){
     players[p_id].points += objectives[o_id].points;
@@ -104,7 +111,13 @@ function completeObjective(p_id,o_id){
     });
     objectiveCount --;
 }
-
+function expireObjective(o_id){
+    delete objectives[o_id];
+    io.sockets.emit('objectivecomplete',{
+        id:o_id
+    });
+    objectiveCount --;
+}
 
 function sendLoop(){
     //send update to clients
@@ -113,13 +126,13 @@ function sendLoop(){
 function spawnLoop(){
     var playercount = Object.keys(players).length;
     if(objectiveCount < Math.max(playercount - 1,2)){
-        addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},util.rand(100,1000));
+        addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},util.rand(100,1000),10);
     }
     setTimeout(spawnLoop,1000/(playercount/2))
 }
 
-function addObjective(position,points){
-    var o = new Objective(position,points);
+function addObjective(position,points,duration){
+    var o = new Objective(position,points,duration);
     var guid = util.guid();
     objectives[guid] = o;
     io.sockets.emit('newobjective',{id:guid,objective:o});

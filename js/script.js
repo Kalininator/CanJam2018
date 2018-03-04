@@ -73,14 +73,14 @@ $(function(){
         for (var id in data){
             players[id].position = data[id].position;
         }
-        // draw();
     });
 
     //objective has been completed
     socket.on('objectivecomplete',function(data){
         delete objectives[data.id];
-        scoreboard = data.scoreboard;
-        // draw();
+        if(data.hasOwnProperty('scoreboard')){
+            scoreboard = data.scoreboard;
+        }
     });
 
     //new objective has been announced
