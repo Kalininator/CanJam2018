@@ -195,14 +195,25 @@ function drawGridlines(dist, color){
 function drawObjective(objective,color){
     pos = drawPosition(objective.position);
     if(isOnScreen(pos)){
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(pos.x,pos.y,objective.radius,0,2*Math.PI);
-        ctx.closePath();
-        ctx.fill();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(objective.points,pos.x,pos.y - objective.radius)
+        var currentTime = new Date().getTime();
+        if((objective.expiretime - currentTime) > 0){
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(pos.x,pos.y,objective.radius,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = 'lightblue';
+            ctx.arc(pos.x,pos.y,objective.radius*0.8,Math.PI / 2,(Math.PI/2) + (Math.PI * 2) * ((objective.expiretime - currentTime) / objective.duration));
+            ctx.lineTo(pos.x,pos.y);
+            ctx.closePath();
+
+            ctx.fill();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(objective.points,pos.x,pos.y - objective.radius)
+        }
     }else{
         //player outside, draw dot on border
         offscreen = getOffscreenPosition(pos);
