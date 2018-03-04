@@ -2,11 +2,14 @@ var io;
 var util = require('./utils');
 var Player = require('./Player');
 var Objective = require('./Objective');
+var Map = require('./Map');
+var map;
 var players = {};
 var objectives = {};
 var objectiveCount = 0;
 
 module.exports = function listen(server){
+    map = new Map(2);
     io = require('socket.io').listen(server);
 
     io.on('connection', connection);
@@ -35,6 +38,7 @@ function connection(socket){
     }
     socket.emit('register',{
         id:socket.id,
+        mapsize: map.size,
         players: plist,
         objectives: objectives,
         scoreboard: getScoreboard()
@@ -79,6 +83,8 @@ function connection(socket){
 }
 
 function loop(){
+
+    map.update(Object.keys(players).length);
     //do movement updates
     for(var p in players){
         //update position
@@ -121,7 +127,7 @@ function expireObjective(o_id){
 
 function sendLoop(){
     //send update to clients
-    sendPlayerUpdate();
+    sendMapUpdate();
 }
 function spawnLoop(){
     var playercount = Object.keys(players).length;
@@ -139,7 +145,7 @@ function addObjective(position,points,duration){
     objectiveCount ++;
 }
 
-function sendPlayerUpdate(){
+function sendMapUpdate(){
     var out = {};
     for (var id in players){
         if (players[id].positionChanged){
@@ -147,7 +153,10 @@ function sendPlayerUpdate(){
             players[id].positionChanged = false;
         }
     }
-    io.sockets.emit('playerpositions',out);
+    io.sockets.emit('mapupdate',{
+        mapsize:map.size,
+        players:out
+    });
 }
 
 function getScoreboard(){

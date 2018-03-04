@@ -8,6 +8,7 @@ var objectives = {};
 var scoreboard = [];
 var mousedown = false;
 var moveto = null;
+var mapsize = 400;
 
 $(function(){
     canvas = $("#canvas")[0];
@@ -24,6 +25,7 @@ $(function(){
     //server sends required data to start drawing
     socket.on('register',function(data){
         id = data.id;
+        mapSize = data.mapsize;
         players = data.players;
         objectives = data.objectives;
         scoreboard = data.scoreboard;
@@ -69,9 +71,10 @@ $(function(){
     });
 
     //updated positions of any players that moved
-    socket.on('playerpositions',function(data){
-        for (var id in data){
-            players[id].position = data[id].position;
+    socket.on('mapupdate',function(data){
+        mapsize = data.mapsize;
+        for (var id in data.players){
+            players[id].position = data.players[id].position;
         }
     });
 
@@ -120,6 +123,40 @@ function draw(){
     mapPosition = {x:-players[id].position.x,y:-players[id].position.y};
     ctx.fillStyle='gray';
     ctx.clearRect(0,0,WIDTH,HEIGHT);
+
+    //draw map circles
+    // var playercount = Object.keys(players).length;
+    var center = drawPosition({x:0,y:0});
+
+    //bounty area
+    ctx.fillStyle = '#ccffcc';
+    ctx.beginPath();
+    ctx.arc(center.x,center.y,mapsize*6,0,2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+    //trap area
+    ctx.fillStyle = '#ffb3b3';
+    ctx.beginPath();
+    ctx.arc(center.x,center.y,mapsize*4,0,2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+    //spawn area
+    ctx.fillStyle = '#ccffff';
+    ctx.beginPath();
+    ctx.arc(center.x,center.y,mapsize*3,0,2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+    //easy area
+    ctx.fillStyle = '#e6ffcc';
+    ctx.beginPath();
+    ctx.arc(center.x,center.y,mapsize*2,0,2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+
 
     //draw gridlines
 
