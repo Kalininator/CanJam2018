@@ -151,7 +151,6 @@ function loop(){
                         y:players[p].position.y,
                         r:players[p].radius
                     }) && !players[p].buffed){
-                    console.log("collide and not buffed");
                     //buff activate
                     players[p].speed += 3;
                     players[p].setBuffed(buffs[b].durationMod * map.size);
@@ -197,7 +196,6 @@ function loop(){
                     }
                     trappedplayerids.remove(p);
 
-                    console.log(trappedplayerids);
                     for (var _p in trappedplayerids){
                         if(players.hasOwnProperty(trappedplayerids[_p])){
                             players[trappedplayerids[_p]].stunned = true;

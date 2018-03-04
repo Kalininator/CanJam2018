@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    res.render('game', { title: 'Express' });
+    res.render('game', { title: 'CanJam2018' });
 });
 
 module.exports = router;

@@ -5,8 +5,20 @@ html
     title #{title}
     link(rel='stylesheet', href='css/index.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
-    script(src='/socket.io/socket.io.js')
-    //script(src='js/script.js')
+    //script(src='/socket.io/socket.io.js')
+    script(src='js/index.js')
   body
-    //canvas#canvas
-    a(href='game') Game
+    h1 Can Jam 2018
+    img#qr(src='/res/urlqr.png')
+    h1 cj.kalinin.uk
+    p Touch or mouse click to move
+    p Grab objectives before they expire
+    p
+      input#name(type='text',placeholder='Name (optional)')
+    p
+      button#start Start Game
+    p Objectives in the middle have much lower rewards than outer objectives
+    img(src='/res/stopwatch.png')
+    p Stopwatches give a shirt speed boost
+    img(src='/res/flashbang.png')
+    p Traps stun other nearby players when activated

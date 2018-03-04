@@ -11,6 +11,10 @@ var scoreboard = [];
 var mousedown = false;
 var moveto = null;
 var mapsize = 400;
+var stopwatch = new Image();
+stopwatch.src = '/res/stopwatch.png';
+var flashbang = new Image();
+flashbang.src= '/res/flashbang.png';
 
 $(function(){
     canvas = $("#canvas")[0];
@@ -303,14 +307,16 @@ function drawArclines(dist,color,qty){
 function drawBuff(buff,color){
     var angpos = anglePos(buff.angle,buff.distanceMod*mapsize);
     pos = drawPosition(angpos);
-    ctx.fillStyle = color;
-    ctx.fillRect(pos.x-(buff.size/2),pos.y-(buff.size/2),buff.size,buff.size);
+    // ctx.fillStyle = color;
+    // ctx.fillRect(pos.x-(buff.size/2),pos.y-(buff.size/2),buff.size,buff.size);
+    ctx.drawImage(stopwatch,pos.x-(buff.size/2),pos.y-(buff.size/2));
 }
 function drawTrap(trap,color){
     var angpos = anglePos(trap.angle,trap.distanceMod*mapsize);
     pos = drawPosition(angpos);
-    ctx.fillStyle = color;
-    ctx.fillRect(pos.x-(trap.size/2),pos.y-(trap.size/2),trap.size,trap.size);
+    // ctx.fillStyle = color;
+    // ctx.fillRect(pos.x-(trap.size/2),pos.y-(trap.size/2),trap.size,trap.size);
+    ctx.drawImage(flashbang,pos.x-(trap.size/2),pos.y-(trap.size/2));
 }
 
 function drawObjective(objective,color){
