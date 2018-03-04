@@ -42,7 +42,7 @@ $(function(){
     socket.on('playerleft',function(data){
         delete players[data.id];
         scoreboard = data.scoreboard;
-        draw();
+        // draw();
     });
 
     //updated positions of any players that moved
@@ -50,21 +50,20 @@ $(function(){
         for (var id in data){
             players[id].position = data[id].position;
         }
-        draw();
+        // draw();
     });
 
     //objective has been completed
     socket.on('objectivecomplete',function(data){
         delete objectives[data.id];
-        if('scoreboard' in data.scoreboard){
-            scoreboard = data.scoreboard;
-        }
-        draw();
+        scoreboard = data.scoreboard;
+        // draw();
     });
 
+    //new objective has been announced
     socket.on('newobjective',function(data){
         objectives[data.id] = data.objective;
-        draw();
+        // draw();
     });
 
     //listeners for movement controls
@@ -89,8 +88,8 @@ function loop(){
         norm = normaliseVec(moveto,4);
         players[id].position.x += norm.x;
         players[id].position.y += norm.y;
-        draw();
     }
+    draw();
 }
 
 
