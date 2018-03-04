@@ -28,7 +28,8 @@ function connection(socket){
     for (var p in players){
         plist[p] = {
             position:players[p].position,
-            name: players[p].name
+            name: players[p].name,
+            speed: players[p].speed
         };
     }
     socket.emit('register',{
@@ -101,7 +102,7 @@ function sendLoop(){
 function spawnLoop(){
     var playercount = Object.keys(players).length;
     if(objectiveCount < Math.max(playercount - 1,2)){
-        addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},600);
+        addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},util.rand(100,1000));
     }
     setTimeout(spawnLoop,1000/(playercount/2))
 }

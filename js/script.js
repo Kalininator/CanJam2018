@@ -85,7 +85,7 @@ function loop(){
     //movement updates
     if(moveto != null && mousedown){
         // console.log(moveto);
-        norm = normaliseVec(moveto,4);
+        norm = normaliseVec(moveto,players[id].speed);
         players[id].position.x += norm.x;
         players[id].position.y += norm.y;
     }
@@ -174,15 +174,18 @@ function drawObjective(objective,color){
     if(isOnScreen(pos)){
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(pos.x,pos.y,20,0,2*Math.PI);
+        ctx.arc(pos.x,pos.y,objective.radius,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(objective.points,pos.x,pos.y - objective.radius)
     }else{
         //player outside, draw dot on border
         offscreen = getOffscreenPosition(pos);
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(offscreen.x,offscreen.y,15,0,2*Math.PI);
+        ctx.arc(offscreen.x,offscreen.y,objective.radius * 0.75,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         ctx.font = '15pt Calibri';
@@ -225,7 +228,7 @@ function drawPlayer(player,color){
         offscreen = getOffscreenPosition(pos);
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(offscreen.x,offscreen.y,10,0,2*Math.PI);
+        ctx.arc(offscreen.x,offscreen.y,7,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         // ctx.font = '15pt Calibri';
