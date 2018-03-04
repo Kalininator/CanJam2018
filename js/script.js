@@ -96,14 +96,10 @@ $(function(){
 
     socket.on('speedbuff',function(data){
        if(data.id == id){
-           console.log(players[id].speed);
            players[id].speed += data.amount;
-           console.log(players[id].speed);
            var duration = data.durationMod*mapsize;
-           console.log(duration);
            setTimeout(function(){
                players[id].speed -= data.amount;
-               console.log(players[id].speed);
            },duration);
        }
        buffs[data.buffid].up = false;
@@ -285,7 +281,7 @@ function drawBuff(buff,color){
 }
 
 function drawObjective(objective,color){
-    pos = drawPosition(objective.position);
+    pos = drawPosition(anglePos(objective.angle,objective.distanceMod * mapsize));
     if(isOnScreen(pos)){
         var currentTime = new Date().getTime();
         if((objective.expiretime - currentTime) > 0){

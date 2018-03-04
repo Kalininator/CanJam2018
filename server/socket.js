@@ -19,10 +19,7 @@ module.exports = function listen(server){
         buffs[util.guid()] = new Buff(i,3.5,10,4000);
     }
 
-
     io.on('connection', connection);
-
-
 
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
@@ -113,15 +110,16 @@ function loop(){
     for (var p in players){
         //check if got any objectves
         for(var o in objectives){
-            var dist = util.distance(objectives[o].position,players[p].position);
-            if(dist < players[p].radius + objectives[o].radius){
+            var obj = objectives[o];
+            var dist = util.distance(util.anglePos(obj.angle,obj.distanceMod*map.size),players[p].position);
+            if(dist < players[p].radius + obj.radius){
                 completeObjective(p,o);
             }
         }
         //check if hit a buff
         for(var b in buffs){
             if(buffs[b].up){
-                var pos = util.anlePos(buffs[b].angle,buffs[b].distanceMod * map.size);
+                var pos = util.anglePos(buffs[b].angle,buffs[b].distanceMod * map.size);
                 var buffrect = {
                     x:pos.x-(buffs[b].size/2),
                     y:pos.y-(buffs[b].size/2),
@@ -187,18 +185,18 @@ function spawnLoop(){
     if(objectiveCount < Math.max(playercount +1,2)){
         if(Math.random() > 0.75){
             //spawn big
-            addObjective(util.randMapPosition(map.size*6 + 30,map.size*7 - 30),util.rand(600,1000),map.size*50);
+            addObjective(util.randAngle(),6.5,util.rand(600,1000),map.size*50);
         }else{
             //spawn small objective
-            addObjective(util.randMapPosition(0,map.size*2 - 20),util.rand(50,300),3000);
+            addObjective(util.randAngle(),Math.random()*2,util.rand(50,300),3000);
         }
 
     }
     setTimeout(spawnLoop,1000/(playercount/2))
 }
 
-function addObjective(position,points,duration){
-    var o = new Objective(position,points,duration);
+function addObjective(angle,distanceMod,points,duration){
+    var o = new Objective(angle,distanceMod,points,duration);
     var guid = util.guid();
     objectives[guid] = o;
     io.sockets.emit('newobjective',{id:guid,objective:o});

@@ -10,6 +10,9 @@ module.exports = {
             y:Math.sin(angle) * distance
         };
     },
+    randAngle: function(){
+        return Math.random() * 2 * Math.PI;
+    },
     normaliseVec: function (vec,speed){
         var len = Math.sqrt((vec.x*vec.x)+(vec.y*vec.y));
         var multi = len / speed;
@@ -50,7 +53,7 @@ module.exports = {
         var dy=distY-rect.h/2;
         return (dx*dx+dy*dy<=(circle.r*circle.r));
     },
-    anlePos: function(angle,distance){
+    anglePos: function(angle,distance){
         return {
             x:Math.cos(angle) * distance,
             y:Math.sin(angle) * distance
