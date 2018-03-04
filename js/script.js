@@ -64,7 +64,7 @@ function loop(){
     //movement updates
     if(moveto != null && mousedown){
         // console.log(moveto);
-        norm = normaliseVec(moveto,6);
+        norm = normaliseVec(moveto,4);
         players[id].position.x += norm.x;
         players[id].position.y += norm.y;
         draw();

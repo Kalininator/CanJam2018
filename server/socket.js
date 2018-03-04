@@ -46,6 +46,10 @@ function loop(){
         //update position
         players[p].update();
 
+
+    }
+
+    for (var p in players){
         //check if got any objectves
         for(var o in objectives){
             var dist = util.distance(objectives[o].position,players[p].position);
@@ -54,8 +58,8 @@ function loop(){
                 //got objective :)
                 players[p].points += objectives[o].points;
                 // io.emit('removeObjective',o);
-                sendObjectiveList();
                 delete objectives[o];
+                sendObjectiveList();
                 objectiveCount --;
             }
         }
