@@ -4,6 +4,7 @@ module.exports = function(position){
     this.mousedown = false;
     this.moveto = null;
     this.positionChanged = false;
+    this.buffed = false;
     this.speed = 4;
     this.radius = 10;
     this.points = 0;
@@ -16,5 +17,12 @@ module.exports = function(position){
             this.position.y += norm.y;
             this.positionChanged = true;
         }
+    };
+    this.setBuffed = function(duration){
+        this.buffed = true;
+        var self = this;
+        setTimeout(function(){
+            self.buffed = false;
+        },duration);
     }
 };

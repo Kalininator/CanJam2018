@@ -14,8 +14,11 @@ module.exports = function listen(server){
     map = new Map(2);
     io = require('socket.io').listen(server);
 
-    var b = new Buff(0,3,5000);
-    buffs[util.guid()] = b;
+    for(var i = 0; i < 2*Math.PI; i += Math.PI/2){
+        // var b = new Buff(i,3,5000);
+        buffs[util.guid()] = new Buff(i,3,5000);
+    }
+
 
     io.on('connection', connection);
 
@@ -129,9 +132,11 @@ function loop(){
                         x:players[p].position.x,
                         y:players[p].position.y,
                         r:players[p].radius
-                    })){
+                    }) && !players[p].buffed){
+                    console.log("collide and not buffed");
                     //buff activate
                     players[p].speed += 3;
+                    players[p].setBuffed(buffs[b].duration);
                     setTimeout(function(){
                         players[p].speed -= 3;
                     },buffs[b].duration);
@@ -142,10 +147,7 @@ function loop(){
                         buffid:b,
                         cooldown:buffs[b].cooldown
                     });
-                    buffs[b].up = false;
-                    setTimeout(function(){
-                        buffs[b].up = true;
-                    },buffs[b].cooldown);
+                    buffs[b].goDown();
                 }
             }
         }

@@ -191,13 +191,13 @@ function draw(){
 
 function drawMap(){
     ctx.fillStyle='gray';
-    ctx.fillRect(0,0,WIDTH,HEIGHT);
+    ctx.clearRect(0,0,WIDTH,HEIGHT);
 
     // draw gridlines
 
-    drawGridlines(256,'#e0e0e0');
+    drawGridlines(16,'#e0e0e0');
     drawGridlines(128,'#cccccc');
-    drawGridlines(16,'#aaaaaa');
+    drawGridlines(256,'#aaaaaa');
     drawArclines(mapsize*6,'#e0e0e0',36);
     //draw map circles
     // var playercount = Object.keys(players).length;
