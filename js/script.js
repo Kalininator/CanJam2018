@@ -34,6 +34,13 @@ $(function(){
         var name = location.search.split('name=')[1];
         if(name){
             socket.emit('setname',name);
+        }else{
+            //try get name from local storage
+            var localName = localStorage.getItem('name');
+            if (localName != null){
+                console.log(localName);
+                socket.emit('setname',localName);
+            }
         }
 
     });
@@ -48,6 +55,10 @@ $(function(){
     //player changed name
     socket.on('namechange',function(data){
         players[data.id].name = data.name;
+        if(data.id == id){
+            //my name was approved, save in local
+            localStorage.setItem('name',data.name);
+        }
     });
 
     //player left
