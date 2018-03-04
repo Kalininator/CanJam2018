@@ -37,7 +37,7 @@ module.exports = {
                 .toString(16)
                 .substring(1);
         }
-        return "anon-" + s4();
+        return s4();
     },
     collideRectCircle: function(rect,circle){
         var distX = Math.abs(circle.x - rect.x-rect.w/2);

@@ -108,12 +108,29 @@ function connection(socket){
 
     //player name set
     socket.on('setname',function(data){
-        players[socket.id].name = data;
-        //tell everyone this guy changed his name
-        io.sockets.emit('namechange',{
-            id:socket.id,
-            name:players[socket.id].name
-        });
+        var nametaken = false;
+        for(var p in players){
+            if(players.hasOwnProperty(p)){
+                if(players[p].name == data){
+                    nametaken = true;
+                }
+            }
+        }
+        if(nametaken){
+            players[socket.id].name = data + util.playerguid();
+            //tell everyone this guy changed his name
+            io.sockets.emit('namechange',{
+                id:socket.id,
+                name:players[socket.id].name
+            });
+        }else {
+            players[socket.id].name = data;
+            //tell everyone this guy changed his name
+            io.sockets.emit('namechange', {
+                id: socket.id,
+                name: players[socket.id].name
+            });
+        }
     });
 
 

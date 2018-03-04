@@ -9,7 +9,7 @@ module.exports = function(position){
     this.speed = 4;
     this.radius = 10;
     this.points = 0;
-    this.name = utils.playerguid();
+    this.name = 'anon' + utils.playerguid();
     this.update = function(){
         //movement
         if (this.moveto != null && this.mousedown && !this.stunned){
