@@ -5,6 +5,7 @@ var mapPosition;
 var WIDTH, HEIGHT;
 var players = {};
 var objectives = {};
+var scoreboard = [];
 var mousedown = false;
 var moveto = null;
 
@@ -45,6 +46,10 @@ $(function(){
         objectives = data;
         draw();
     });
+    socket.on('scoreboard',function(data){
+        scoreboard = data;
+        console.log(data);
+    });
 
     $(canvas).on('mousedown touchstart',function(){
         mousedown = true;
@@ -81,6 +86,8 @@ function draw(){
 
     drawGridlines(16,'#e0e0e0');
     drawGridlines(128,'#cccccc');
+    drawGridlines(256,'#aaaaaa');
+
 
 
     //draw objectives
@@ -99,6 +106,18 @@ function draw(){
                 drawPlayer(players[player],'green');
             }
         }
+    }
+
+    //draw scoreboard
+    // ctx.fillStyle = 'white';
+    // ctx.fillRect(20,20,170,(scoreboard.length + 2)*20);
+    ctx.fillStyle = 'black';
+    ctx.textAlign='left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('Scores:',30,30);
+    //draw scores
+    for(var i = 0; i < scoreboard.length; i ++){
+        ctx.fillText(scoreboard[i][0] + ": " + scoreboard[i][1],30,50 + (i*20));
     }
 }
 
@@ -176,6 +195,9 @@ function drawPlayer(player,color){
         ctx.arc(pos.x,pos.y,10,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
+        ctx.font = '15pt Calibri';
+        ctx.textAlign = 'center';
+        ctx.fillText(player.name,pos.x,pos.y-20);
     }else{
         //player outside, draw dot on border
         offscreen = getOffscreenPosition(pos);

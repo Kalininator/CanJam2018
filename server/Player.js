@@ -6,6 +6,7 @@ module.exports = function(position){
     this.positionChanged = false;
     this.speed = 4;
     this.points = 0;
+    this.name = utils.playerguid();
     this.update = function(){
         //movement
         if (this.moveto != null && this.mousedown){

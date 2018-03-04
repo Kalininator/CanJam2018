@@ -31,9 +31,10 @@ module.exports = function listen(server){
         socket.emit('register',socket.id);
         sendPlayerList();
         sendObjectiveList();
+        generateScoreboard();
     });
 
-
+    console.log(util.playerguid());
 
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
@@ -62,6 +63,7 @@ function loop(){
                 delete objectives[o];
                 sendObjectiveList();
                 objectiveCount --;
+                generateScoreboard();
             }
         }
     }
@@ -100,4 +102,15 @@ function sendPlayerUpdate(){
         }
     }
     io.sockets.emit('playerUpdates',out);
+}
+
+function generateScoreboard(){
+    var sortable = [];
+    for (var p in players){
+        sortable.push([players[p].name,players[p].points])
+    }
+    sortable.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+    io.sockets.emit('scoreboard',sortable);
 }
