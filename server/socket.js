@@ -78,7 +78,7 @@ function loop(){
         //check if got any objectves
         for(var o in objectives){
             var dist = util.distance(objectives[o].position,players[p].position);
-            if(dist < 20 + 10){
+            if(dist < players[p].radius + objectives[o].radius){
                 completeObjective(p,o);
             }
         }
