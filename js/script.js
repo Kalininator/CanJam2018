@@ -100,7 +100,6 @@ function draw(){
             }
         }
     }
-
 }
 
 function drawGridlines(dist, color){
@@ -152,6 +151,22 @@ function drawObjective(objective,color){
         ctx.fillText(offscreen.distance + "m",offscreen.text_x,offscreen.text_y);
     }
 }
+
+// function strokeStar(x, y, r, n, inset) {
+//     ctx.save();
+//     ctx.beginPath();
+//     ctx.translate(x, y);
+//     ctx.moveTo(0,0-r);
+//     for (var i = 0; i < n; i++) {
+//         ctx.rotate(Math.PI / n);
+//         ctx.lineTo(0, 0 - (r*inset));
+//         ctx.rotate(Math.PI / n);
+//         ctx.lineTo(0, 0 - r);
+//     }
+//     ctx.closePath();
+//     ctx.fill();
+//     ctx.restore();
+// }
 
 function drawPlayer(player,color){
     pos = drawPosition(player.position);

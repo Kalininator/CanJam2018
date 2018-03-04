@@ -37,7 +37,8 @@ module.exports = function listen(server){
 
     setInterval(loop, 1000/60);
     setInterval(sendLoop,1000/30);
-    setInterval(spawnLoop,1000);
+    // setInterval(spawnLoop,1000);
+    spawnLoop();
 };
 
 function loop(){
@@ -64,16 +65,17 @@ function loop(){
             }
         }
     }
-
 }
 function sendLoop(){
     //send update to clients
     sendPlayerUpdate();
 }
 function spawnLoop(){
-    if(objectiveCount < Object.keys(players).length * 2){
+    var playercount = Object.keys(players).length;
+    if(objectiveCount < Math.max(playercount - 1,2)){
         addObjective({x:util.rand(-500,500),y:util.rand(-500,500)},600);
     }
+    setTimeout(spawnLoop,1000/(playercount/2))
 }
 
 function addObjective(position,points){

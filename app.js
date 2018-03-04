@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var game = require('./routes/game');
 
 var app = express();
 // view engine setup
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/game', game);
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/res", express.static(__dirname + "/res"));
 app.use("/css", express.static(__dirname + "/css"));
