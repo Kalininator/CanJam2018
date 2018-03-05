@@ -172,7 +172,9 @@ function loop(){
                     players[p].speed += 3;
                     players[p].setBuffed(buffs[b].durationMod * map.size);
                     setTimeout(function(){
-                        players[p].speed -= 3;
+                        if(players.hasOwnProperty(p)){
+                            players[p].speed -= 3;
+                        }
                     },buffs[b].durationMod * map.size);
                     io.sockets.emit('speedbuff',{
                         id:p,
