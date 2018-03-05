@@ -1,7 +1,7 @@
 module.exports = function(playercount){
-    this.size = Math.round(Math.sqrt(playercount) * 70);
+    this.size = Math.max(Math.round(Math.sqrt(playercount) * 70),70);
     this.update = function(playercount){
-        var preferredSize = Math.round(Math.sqrt(playercount) * 70);
+        var preferredSize = Math.max(Math.round(Math.sqrt(playercount) * 70),70);
         if(this.size < preferredSize - 1){
             this.size += 0.05;
         }else if(this.size > preferredSize + 1){
