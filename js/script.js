@@ -12,9 +12,9 @@ var mousedown = false;
 var moveto = null;
 var mapsize = 400;
 var stopwatch = new Image();
-stopwatch.src = '/res/stopwatch.png';
+stopwatch.src = 'res/stopwatch.png';
 var flashbang = new Image();
-flashbang.src= '/res/flashbang.png';
+flashbang.src= 'res/flashbang.png';
 
 $(function(){
     canvas = $("#canvas")[0];
